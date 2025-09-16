@@ -1,3 +1,11 @@
+
+
+## Project Description
+Time Mastery is a comprehensive time management and task organization system designed to help users improve daily productivity and achieve their goals efficiently. The project allows users to prioritize tasks, track the time spent on each activity, and provides analytical reports to help understand and optimize time usage.
+
+Built using [insert technologies, e.g., PHP, Laravel, MySQL], the system features a clean and user-friendly interface to ensure a smooth experience for all users. Key features include task customization, reminders, and intelligent activity categorization, making it easier to organize both personal and professional life effectively.
+
+<<<<<<< HEAD
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -59,3 +67,12 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+=======
+# Graduation-Project
+Project Description:
+Time Mastery is a comprehensive time management and task organization system designed to help users improve daily productivity and achieve their goals efficiently. The project allows users to prioritize tasks, track the time spent on each activity, and provides analytical reports to help understand and optimize time usage.
+
+Built using [insert technologies, e.g., PHP, Laravel, MySQL], the system features a clean and user-friendly interface to ensure a smooth experience for all users. Key features include task customization, reminders, and intelligent activity categorization, making it easier to organize both personal and professional life effectively.
+>>>>>>> 53f83c9a202bbc863d8b6eda797e97cf139c4b2b
+# Graduation-Project
+
