@@ -4,69 +4,189 @@
 @section('page-title', 'Today Tasks')
 
 @section('styles')
-    <!-- CSS إضافي خاص بالصفحة -->
+<style>
+    .day-section {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 0 15px;
+    }
+
+    .day-title {
+        text-align: center;
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+        font-weight: bold;
+    }
+
+    .task-card {
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s;
+        background-color: #fff;
+    }
+
+    .task-card.completed {
+        background-color: #f0f0f0;
+    }
+
+    .task-card.completed .task-name,
+    .task-card.completed .task-desc {
+        text-decoration: line-through;
+        color: #999;
+    }
+
+    .task-info {
+        flex: 1;
+    }
+
+    .task-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .priority {
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-left: 10px;
+        color: #fff;
+    }
+
+    .priority-high { background-color: #e74c3c; }
+    .priority-medium { background-color: #f39c12; }
+    .priority-low { background-color: #2ecc71; }
+
+    .task-time {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .task-desc {
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .task-actions button {
+        border: none;
+        background: none;
+        margin-left: 10px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        color: #555;
+        transition: color 0.2s;
+    }
+
+    .task-actions button:hover:not(:disabled) {
+        color: #000;
+    }
+
+    .task-actions button:disabled {
+        cursor: not-allowed;
+        color: #aaa;
+    }
+
+    .no-tasks-message {
+        text-align: center;
+        margin-top: 100px;
+    }
+
+    .no-tasks-message p {
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+    }
+
+    .btn-add-task {
+        display: inline-block;
+        padding: 10px 25px;
+        background-color: #3498db;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    .btn-add-task:hover { background-color: #2980b9; }
+</style>
 @endsection
 
 @section('content')
-
-<!-- One Day Tasks -->
-<div class="day-section">
-    <div class="day-title">Today</div>
-
-    <div class="task-card">
-        <div class="task-info">
-            <div class="task-name">Go to Gym</div>
-            <div class="task-time">09:00 AM - 11:00 AM</div>
-            <div class="task-desc">Leg day training at the fitness center</div>
-        </div>
-        <div class="task-actions">
-            <button title="Edit"><i class="fas fa-edit"></i></button>
-            <button title="Done" onclick="markDone(this)"><i class="fas fa-check"></i></button>
-            <button title="Delete" onclick="deleteTask(this)"><i class="fas fa-trash"></i></button>
-        </div>
-    </div>
-
-    <div class="task-card">
-        <div class="task-info">
-            <div class="task-name">Team Meeting</div>
-            <div class="task-time">02:00 PM - 03:30 PM</div>
-            <div class="task-desc">Weekly project status update</div>
-        </div>
-        <div class="task-actions">
-            <button title="Edit"><i class="fas fa-edit"></i></button>
-            <button title="Done" onclick="markDone(this)"><i class="fas fa-check"></i></button>
-            <button title="Delete" onclick="deleteTask(this)"><i class="fas fa-trash"></i></button>
-        </div>
-    </div>
-</div>
+@php
+    use Carbon\Carbon;
+    $today = Carbon::now();
+    $todayFormatted = $today->format('l - Y-m-d');
+    $todayTasks = $tasks->filter(fn($task) => $task->start_time->isSameDay($today));
+@endphp
 
 <div class="day-section">
-    <div class="day-title">Tomorrow</div>
+    <div class="day-title">{{ $todayFormatted }}</div>
 
-    <div class="task-card">
-        <div class="task-info">
-            <div class="task-name">Dentist Appointment</div>
-            <div class="task-time">10:30 AM - 11:30 AM</div>
-            <div class="task-desc">Regular checkup at City Dental Clinic</div>
+    @if ($todayTasks->isEmpty())
+        <div class="no-tasks-message">
+            <p>There are no tasks for today 🎉</p>
+            <p>Start adding your tasks to stay organized and productive!</p>
+            <a href="{{ route('tasks.create') }}" class="btn-add-task">Add Task Now</a>
         </div>
-        <div class="task-actions">
-            <button title="Edit"><i class="fas fa-edit"></i></button>
-            <button title="Done" onclick="markDone(this)"><i class="fas fa-check"></i></button>
-            <button title="Delete" onclick="deleteTask(this)"><i class="fas fa-trash"></i></button>
-        </div>
-    </div>
+    @else
+        @foreach ($todayTasks as $task)
+            <div class="task-card @if($task->completed) completed @endif">
+                <div class="task-info">
+                    <div class="task-name">
+                        {{ $task->title }}
+                        @if ($task->priority == 'High') <span class="priority priority-high">High</span>
+                        @elseif($task->priority == 'Medium') <span class="priority priority-medium">Medium</span>
+                        @elseif($task->priority == 'Low') <span class="priority priority-low">Low</span>
+                        @endif
+                    </div>
+                    <div class="task-time">{{ $task->start_time->format('h:i A') }} - {{ $task->end_time->format('h:i A') }}</div>
+                    <div class="task-desc">{{ $task->description }}</div>
+                </div>
+                <div class="task-actions">
+                    <button title="Edit" onclick="window.location.href='{{ route('tasks.edit', $task->id) }}'" @if($task->completed) disabled @endif>
+                        <i class="fas fa-edit"></i>
+                    </button>
+
+                    <form action="{{ route('tasks.complete', $task->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('PATCH')
+                        <button title="Done" @if($task->completed) disabled @endif>
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </form>
+
+                    <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" title="Delete" @if($task->completed) disabled @endif>
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endforeach
+    @endif
 </div>
-
 @endsection
 
 @section('scripts')
-<script>
-function markDone(el) {
-    el.closest('.task-card').classList.toggle('done');
-}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-function deleteTask(el) {
-    el.closest('.task-card').remove();
-}
+@if (session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: '{{ session('success') }}',
+        showConfirmButton: false,
+        timer: 1500
+    });
 </script>
+@endif
 @endsection

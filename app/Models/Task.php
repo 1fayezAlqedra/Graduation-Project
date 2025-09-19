@@ -19,20 +19,16 @@ class Task extends Model
         'title',
         'description',
         'priority',
-        'due_date',
-        'completed'
+        'start_time',
+        'end_time',
+        'completed',
     ];
 
-    /**
-     * تحويل أنواع البيانات
-     */
     protected $casts = [
-        'due_date' => 'datetime',
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
         'completed' => 'boolean',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
     ];
-
     /**
      * القيم الافتراضية للحقول
      */

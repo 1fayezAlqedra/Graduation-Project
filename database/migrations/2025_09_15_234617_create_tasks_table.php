@@ -4,28 +4,23 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->id(); // id
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // FK للمستخدم
-            $table->string('title', 255); // عنوان المهمة
-            $table->text('description')->nullable(); // وصف المهمة
-            $table->enum('priority', ['low', 'medium', 'high'])->default('medium'); // الأولوية
-            $table->dateTime('due_date'); // تاريخ الاستحقاق
-            $table->boolean('completed')->default(false); // حالة الإنجاز
-            $table->timestamps(); // created_at + updated_at
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->enum('priority', ['Low', 'Medium', 'High']);
+            $table->dateTime('start_time');   // وقت البداية
+            $table->dateTime('end_time');     // وقت النهاية
+            $table->boolean('completed')->default(false);
+            $table->timestamps();
         });
     }
 
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tasks');

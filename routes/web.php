@@ -1,44 +1,30 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\home\HomeController;
+use App\Http\Controllers\home\TaskController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
 
-//Authentication Routes
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
+// Auth routes (Breeze / Jetstream / Fortify)
 require __DIR__ . '/auth.php';
 
+// Redirect dashboard → home.index
+Route::get('/dashboard', fn() => redirect()->route('home.index'))
+    ->middleware(['auth'])
+    ->name('dashboard');
 
-// Admin Routs
+// Admin routes
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('index');
-    });
-
-// Admin User Route
-Route::middleware(['auth', 'admin'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
         Route::resource('users', AdminUserController::class);
     });
 
-
-// Site Routs
-Route::middleware('auth')->prefix('/')->name('home.')->group(function () {
+// Site routes (للمستخدم العادي)
+Route::middleware('auth')->name('home.')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('index');
     Route::get('/tasks', [HomeController::class, 'tasks'])->name('tasks');
     Route::get('/calendar', [HomeController::class, 'calendar'])->name('calendar');
@@ -46,6 +32,9 @@ Route::middleware('auth')->prefix('/')->name('home.')->group(function () {
     Route::get('/settings', [HomeController::class, 'settings'])->name('settings');
 });
 
+// Task routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('tasks', TaskController::class);
+Route::patch('/tasks/{id}/complete', [TaskController::class, 'complete'])->name('tasks.complete')->middleware('auth');
 
-
-
+});

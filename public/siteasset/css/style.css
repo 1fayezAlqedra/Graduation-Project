@@ -6,6 +6,21 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+        .priority {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: white;
+            margin-left: 10px;
+        }
+        .priority-high { background-color: #e74c3c; }   /* أحمر */
+        .priority-medium { background-color: #f39c12; } /* برتقالي */
+        .priority-low { background-color: #2ecc71; }    /* أخضر */
+.task-card.done {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
 body {
     display: flex;
     background-color: #0d1b2a;

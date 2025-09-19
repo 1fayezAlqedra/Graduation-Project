@@ -33,8 +33,8 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=random"
-                                class="user-img" alt="{{ $user->name }}">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($authUser->name) }}&background=random"
+                                class="user-img" alt="{{ $authUser->name }}">
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
@@ -42,7 +42,13 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-left"></i> Logout</a>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="bi bi-box-arrow-left"></i> Logout
+                                    </button>
+                                </form>
                             </li>
                         </ul>
                     </li>
@@ -54,9 +60,10 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="user-info">
-            <img src="https://ui-avatars.com/api/?name=Admin+User&background=4361ee&color=fff" alt="User Image">
-            <h5>{{ $user->name }}</h5>
-            <p>{{ $user->email }}</p>
+            <img src="https://ui-avatars.com/api/?name={{ urlencode($authUser->name) }}&background=4361ee&color=fff"
+                alt="User Image">
+            <h5>{{ $authUser->name }}</h5>
+            <p>{{ $authUser->email }}</p>
         </div>
     </div>
 
@@ -64,53 +71,29 @@
     <div class="main-content p-4">
         <div class="stats-cards d-flex gap-3 mb-4">
             <div class="stat-card p-3 bg-light rounded shadow-sm">
-                @php
-                    use App\Models\User;
-                    $totalUsers = User::count();
-                @endphp
                 <i class="bi bi-people"></i>
                 <h3>{{ $totalUsers }}</h3>
                 <p>Total Users</p>
             </div>
             <div class="stat-card p-3 bg-light rounded shadow-sm">
                 <i class="bi bi-list-task"></i>
-                @php
-                    use App\Models\Task;
-                    $totalTasks = Task::count();
-                @endphp
                 <h3>{{ $totalTasks }}</h3>
                 <p>Total Tasks</p>
             </div>
             <div class="stat-card p-3 bg-light rounded shadow-sm">
                 <i class="bi bi-check-circle"></i>
-                @php
-                    $completedTasks = Task::where('completed', true)->count();
-                @endphp
                 <h3>{{ $completedTasks }}</h3>
                 <p>Completed Tasks</p>
             </div>
             <div class="stat-card p-3 bg-light rounded shadow-sm">
                 <i class="bi bi-clock"></i>
-                @php
-                    $pendingTasks = Task::where('completed', false)->count();
-                @endphp
                 <h3>{{ $pendingTasks }}</h3>
                 <p>Pending Tasks</p>
             </div>
-            <!-- بطاقة Canceled Tasks المضافة -->
             <div class="stat-card p-3 bg-light rounded shadow-sm">
                 <i class="bi bi-x-circle"></i>
-                @php
-                    // إذا كان لديك حقل status في جدول tasks
-                    // $canceledTasks = Task::where('status', 'canceled')->count();
-
-                    // إذا لم يكن لديك حقل status، يمكنك استخدام completed مع due_date لتحديد المهام الملغاة
-                    $canceledTasks = Task::where('completed', false)
-                                         ->where('due_date', '<', now())
-                                         ->count();
-                @endphp
                 <h3>{{ $canceledTasks }}</h3>
-                <p>Canceled Tasks</p>
+                <p>Canceled/Overdue Tasks</p>
             </div>
         </div>
 
@@ -134,26 +117,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($users as $user)
+                        @foreach ($users as $u)
                             <tr>
-                                <td>{{ $user->id }}</td>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td>{{ $user->role }}</td>
+                                <td>{{ $u->id }}</td>
+                                <td>{{ $u->name }}</td>
+                                <td>{{ $u->email }}</td>
+                                <td>{{ $u->role }}</td>
                                 <td>
                                     <!-- زر التعديل -->
                                     <button class="btn btn-sm btn-outline-primary"
-                                        onclick="window.location.href='{{ route('admin.users.edit', $user->id) }}'">
+                                        onclick="window.location.href='{{ route('admin.users.edit', $u->id) }}'">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    {{-- Delete btn --}}
-                                    <form id="delete-user-{{ $user->id }}"
-                                        action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+
+                                    <!-- زر الحذف -->
+                                    <form id="delete-user-{{ $u->id }}"
+                                        action="{{ route('admin.users.destroy', $u->id) }}" method="POST"
                                         style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-sm btn-outline-danger"
-                                            onclick="confirmDelete('delete-user-{{ $user->id }}')">
+                                            onclick="confirmDelete('delete-user-{{ $u->id }}')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

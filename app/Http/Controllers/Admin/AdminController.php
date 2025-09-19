@@ -11,13 +11,35 @@ use Illuminate\Support\Facades\Auth;
 class AdminController extends Controller
 {
 
-    function index()
+    public function index()
     {
         $users = User::all();
-        $user = Auth::user(); // return the redisterd Admin
+        $authUser = Auth::user();
 
-        return view('admin.index', compact('users', 'user'));
+        // إحصائيات المستخدمين
+        $totalUsers = User::count();
+
+        // إحصائيات المهام
+        $totalTasks = Task::count();
+        $completedTasks = Task::where('completed', true)->count();
+        $pendingTasks = Task::where('completed', false)->count();
+
+        // إلغاء أو تأخير المهام (اعتمدت end_time بدل due_date لأنك غيرت التسمية)
+        $canceledTasks = Task::where('completed', false)
+            ->where('end_time', '<', now())
+            ->count();
+
+        return view('admin.index', compact(
+            'users',
+            'authUser',
+            'totalUsers',
+            'totalTasks',
+            'completedTasks',
+            'pendingTasks',
+            'canceledTasks'
+        ));
     }
+
 
     function Add_User()
     {
