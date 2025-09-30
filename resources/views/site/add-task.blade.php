@@ -1,8 +1,13 @@
 @extends('site.master')
+@section('styles')
+<link rel="stylesheet" href="{{ asset('siteasset/css/add_Task.css') }}">
+@endsection
 @section('content')
 
 <!-- ===== MAIN CONTENT ===== -->
 <div class="main">
+
+
 
     <!-- Add Task Form -->
     <div class="form-container">

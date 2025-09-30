@@ -1,79 +1,89 @@
 @extends('site.master')
+
+@section('title', 'Settings - MyApp')
+
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('siteasset/css/settings.css') }}">
+@endsection
+
 @section('content')
-    <!-- Settings Section -->
-    <div class="settings-container">
-        <div class="setting-item">
-            <div>
-                <h3>Email Notifications</h3>
-                <p>Receive email notifications for new tasks</p>
-            </div>
-            <label class="toggle-switch">
-                <input type="checkbox" checked>
-                <span class="slider"></span>
-            </label>
-        </div>
 
-        <div class="setting-item">
-            <div>
-                <h3>Dark Mode</h3>
-                <p>Enable dark theme</p>
-            </div>
-            <label class="toggle-switch">
-                <input type="checkbox" checked>
-                <span class="slider"></span>
-            </label>
-        </div>
+<div class="settings-container">
 
-        <div class="setting-item">
-            <div>
-                <h3>Auto Backup</h3>
-                <p>Automatically backup your tasks</p>
-            </div>
-            <label class="toggle-switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-            </label>
-        </div>
+    <!-- Account Info -->
+    <div class="section">
+        <h2>Account Information</h2>
+        <form method="POST" action="{{ route('settings.update', auth()->id()) }}">
+            @csrf
+            @method('PUT')
 
-        <div class="setting-item">
-            <div>
-                <h3>Language</h3>
-                <p>Select your preferred language</p>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" value="{{ $user->name }}" required>
             </div>
-            <select class="form-control" style="width: auto;">
-                <option>English</option>
-                <option>Arabic</option>
-                <option>Spanish</option>
-                <option>French</option>
-            </select>
-        </div>
-
-        <div class="setting-item">
-            <div>
-                <h3>Date Format</h3>
-                <p>Choose how dates are displayed</p>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" value="{{ $user->email }}" required>
             </div>
-            <select class="form-control" style="width: auto;">
-                <option>MM/DD/YYYY</option>
-                <option>DD/MM/YYYY</option>
-                <option>YYYY-MM-DD</option>
-            </select>
-        </div>
 
-        <div class="setting-item">
-            <div>
-                <h3>Time Format</h3>
-                <p>Choose 12-hour or 24-hour clock</p>
-            </div>
-            <select class="form-control" style="width: auto;">
-                <option>12-hour</option>
-                <option>24-hour</option>
-            </select>
-        </div>
-
-        <div class="form-actions" style="margin-top: 20px;">
-            <button class="btn btn-secondary">Reset to Default</button>
-            <button class="btn btn-primary">Save Settings</button>
-        </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
     </div>
+
+    <!-- Security -->
+    <div class="section">
+        <h2>Security</h2>
+        <form method="POST" action="{{ route('settings.update', auth()->id()) }}">
+            @csrf
+            @method('PUT')
+
+            <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" name="current_password" required>
+            </div>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" name="new_password">
+            </div>
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" name="new_password_confirmation">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Password</button>
+        </form>
+    </div>
+
+    <!-- Preferences -->
+    <div class="section">
+        <h2>Preferences</h2>
+        <form method="POST" action="{{ route('settings.update', auth()->id()) }}">
+            @csrf
+            @method('PUT')
+
+            <div class="form-group">
+                <label>Reminders</label>
+                <label class="switch">
+                    <input type="checkbox" name="reminders" {{ $user->reminders ? 'checked' : '' }}>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Preferences</button>
+        </form>
+    </div>
+
+    <!-- Account Management -->
+    <div class="section">
+        <h2>Account Management</h2>
+        <form method="POST" action="{{ route('settings.destroy', auth()->id()) }}">
+            @csrf
+            @method('DELETE')
+            <button type="button" class="btn btn-secondary" onclick="alert('Download feature not implemented yet')">Download My Data</button>
+            <button type="submit" class="btn btn-danger" onclick="return confirm('⚠️ Are you sure you want to delete your account? This action cannot be undone.')">Delete Account</button>
+        </form>
+    </div>
+
+</div>
+
 @endsection

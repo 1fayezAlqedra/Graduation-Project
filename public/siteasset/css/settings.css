@@ -1,0 +1,149 @@
+body {
+    background: #0b1e39; /* كحلي غامق */
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    color: #333;
+}
+.settings-container {
+    max-width: 950px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+/* ملف settings.css */
+
+/* الأزرار الأساسية (Primary Button) */
+.btn-primary {
+    background-color: #1e40af; /* كحلي */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #1b3b92; /* كحلي غامق عند الهوفر */
+}
+
+/* زر الحذف (Danger Button) */
+.btn-danger {
+    background-color: #dc2626; /* أحمر */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #991b1b; /* أحمر داكن عند الهوفر */
+}
+
+/* زر ثانوي (اختياري) */
+.btn-secondary {
+    background-color: #6b7280; /* رمادي متوسط */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #4b5563; /* رمادي غامق */
+}
+
+h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #0056b3;
+    border-left: 5px solid #007bff;
+    padding-left: 10px;
+}
+.form-group {
+    margin-bottom: 18px;
+}
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+input,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+input:focus,
+select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+.btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+.section {
+    margin-bottom: 45px;
+    padding-bottom: 25px;
+    border-bottom: 1px dashed #ddd;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 19px;
+    width: 19px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #007bff;
+}
+input:checked + .slider:before {
+    transform: translateX(24px);
+}

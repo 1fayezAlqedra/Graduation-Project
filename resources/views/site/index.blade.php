@@ -4,118 +4,7 @@
 @section('page-title', 'Today Tasks')
 
 @section('styles')
-<style>
-    .day-section {
-        max-width: 900px;
-        margin: 50px auto;
-        padding: 0 15px;
-    }
-
-    .day-title {
-        text-align: center;
-        font-size: 1.8rem;
-        margin-bottom: 30px;
-        font-weight: bold;
-    }
-
-    .task-card {
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.3s;
-        background-color: #fff;
-    }
-
-    .task-card.completed {
-        background-color: #f0f0f0;
-    }
-
-    .task-card.completed .task-name,
-    .task-card.completed .task-desc {
-        text-decoration: line-through;
-        color: #999;
-    }
-
-    .task-info {
-        flex: 1;
-    }
-
-    .task-name {
-        font-size: 1.3rem;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
-
-    .priority {
-        padding: 2px 8px;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        margin-left: 10px;
-        color: #fff;
-    }
-
-    .priority-high { background-color: #e74c3c; }
-    .priority-medium { background-color: #f39c12; }
-    .priority-low { background-color: #2ecc71; }
-
-    .task-time {
-        font-size: 0.9rem;
-        color: #555;
-        margin-bottom: 10px;
-    }
-
-    .task-desc {
-        font-size: 1rem;
-        color: #333;
-    }
-
-    .task-actions button {
-        border: none;
-        background: none;
-        margin-left: 10px;
-        cursor: pointer;
-        font-size: 1.1rem;
-        color: #555;
-        transition: color 0.2s;
-    }
-
-    .task-actions button:hover:not(:disabled) {
-        color: #000;
-    }
-
-    .task-actions button:disabled {
-        cursor: not-allowed;
-        color: #aaa;
-    }
-
-    .no-tasks-message {
-        text-align: center;
-        margin-top: 100px;
-    }
-
-    .no-tasks-message p {
-        margin-bottom: 20px;
-        font-size: 1.2rem;
-    }
-
-    .btn-add-task {
-        display: inline-block;
-        padding: 10px 25px;
-        background-color: #3498db;
-        color: #fff;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: background 0.3s;
-    }
-
-    .btn-add-task:hover { background-color: #2980b9; }
-</style>
+<link rel="stylesheet" href="{{ asset('siteasset/css/home.css') }}">
 @endsection
 
 @section('content')
@@ -126,7 +15,13 @@
     $todayTasks = $tasks->filter(fn($task) => $task->start_time->isSameDay($today));
 @endphp
 
-<div class="day-section">
+<div class="day-section" style="max-width:900px;margin:0 auto;">
+
+    <!-- زر إضافة مهمة -->
+    <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+        <a href="{{ route('tasks.create') }}" class="btn-add-task">+ Add Task</a>
+    </div>
+
     <div class="day-title">{{ $todayFormatted }}</div>
 
     @if ($todayTasks->isEmpty())
@@ -147,7 +42,9 @@
                         @endif
                     </div>
                     <div class="task-time">{{ $task->start_time->format('h:i A') }} - {{ $task->end_time->format('h:i A') }}</div>
-                    <div class="task-desc">{{ $task->description }}</div>
+                    @if(!empty($task->description))
+                        <div class="task-desc">{{ $task->description }}</div>
+                    @endif
                 </div>
                 <div class="task-actions">
                     <button title="Edit" onclick="window.location.href='{{ route('tasks.edit', $task->id) }}'" @if($task->completed) disabled @endif>

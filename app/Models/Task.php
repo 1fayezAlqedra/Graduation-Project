@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,9 +10,6 @@ class Task extends Model
 {
     use HasFactory;
 
-    /**
-     * الحقول التي يمكن تعبئتها جماعياً (Mass Assignment)
-     */
     protected $fillable = [
         'user_id',
         'title',
@@ -29,74 +25,38 @@ class Task extends Model
         'end_time' => 'datetime',
         'completed' => 'boolean',
     ];
-    /**
-     * القيم الافتراضية للحقول
-     */
+
     protected $attributes = [
         'priority' => 'medium',
         'completed' => false,
     ];
 
-    /**
-     * العلاقة مع نموذج User (المستخدم)
-     */
+    // ✅ العلاقة مع المستخدم
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * العلاقة مع نموذج TimeSlot (الفواصل الزمنية)
-     */
-    public function timeSlots(): HasMany
-    {
-        return $this->hasMany(TimeSlot::class);
-    }
-
-    /**
-     * العلاقة مع نموذج Reminder (التذكيرات)
-     */
-    public function reminders(): HasMany
-    {
-        return $this->hasMany(Reminder::class);
-    }
-
-    /**
-     * نطاق الاستعلام للمهام المكتملة
-     */
+    // ✅ سكوبات جاهزة
     public function scopeCompleted($query)
     {
         return $query->where('completed', true);
     }
 
-    /**
-     * نطاق الاستعلام للمهام غير المكتملة
-     */
     public function scopeIncomplete($query)
     {
         return $query->where('completed', false);
     }
 
-    /**
-     * نطاق الاستعلام للمهام ذات الأولوية العالية
-     */
     public function scopeHighPriority($query)
     {
         return $query->where('priority', 'high');
     }
 
-
-
-
-
-
-
-
     public function markAsCompleted(): void
     {
         $this->update(['completed' => true]);
     }
-
 
     public function markAsIncomplete(): void
     {
