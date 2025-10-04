@@ -12,15 +12,15 @@ class HomeController extends Controller
 {
 
 
-function index()
-{
-    $today = Carbon::today(); 
-    $tasks = Task::where('user_id', Auth::id())
-                ->whereDate('start_time', $today) // أو whereDate('end_time', $today)
-                ->get();
+    function index()
+    {
+        $today = Carbon::today();
+        $tasks = Task::where('user_id', Auth::id())
+            ->whereDate('start_time', $today) // أو whereDate('end_time', $today)
+            ->get();
 
-    return view('site.index', compact('tasks', 'today'));
-}
+        return view('site.index', compact('tasks', 'today'));
+    }
 
 
     function tasks()
@@ -41,5 +41,10 @@ function index()
     function settings()
     {
         return view('site.settings');
+    }
+
+    function aboutUs()
+    {
+        return view('site.aboutUs');
     }
 }

@@ -1,0 +1,137 @@
+/* ===== About Us Page (Luxury Navy Gradient Cards) ===== */
+body {
+    background: #0a1428; /* deep navy solid */
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+.about-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+/* Title */
+.section-title h2 {
+    font-size: 42px;
+    font-weight: 800;
+    background: linear-gradient(45deg, #36b9cc, #1cc88a, #4e73df);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 15px;
+}
+
+.section-subtitle {
+    font-size: 20px;
+    color: #bbb;
+    margin-bottom: 50px;
+}
+
+/* Team Member Card */
+.team-member {
+    background: linear-gradient(135deg, #1e3c72, #2a5298, #1cc88a); /* gradient card */
+    border-radius: 25px;
+    padding: 40px 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.45);
+    transition: all 0.4s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.team-member:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 20px 45px rgba(28,200,138,0.4);
+}
+
+/* Icon Circle */
+.member-image {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    background: linear-gradient(135deg, #4e73df, #1cc88a);
+    color: #fff;
+    box-shadow: 0 0 25px rgba(78,115,223,0.6);
+}
+
+/* Member Info */
+.member-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+}
+
+.member-role {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1cc88a;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.member-desc {
+    font-size: 16px;
+    color: #eee;
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.member-degree {
+    font-size: 14px;
+    color: #36b9cc;
+    font-weight: 600;
+}
+
+/* Skills Section */
+.skills-section {
+    margin-top: 70px;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 per row */
+    gap: 25px;
+}
+
+.skill-card {
+    background: linear-gradient(145deg, #16222a, #3a6073); /* gradient navy card */
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+    transition: all 0.4s;
+}
+
+.skill-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(28,200,138,0.4);
+}
+
+.skill-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+    background: linear-gradient(45deg, #1cc88a, #36b9cc, #4e73df);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.skill-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.skill-desc {
+    font-size: 16px;
+    color: #ddd;
+}

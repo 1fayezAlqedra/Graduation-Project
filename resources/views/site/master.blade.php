@@ -35,6 +35,8 @@
             <li><a href="{{ url('/calendar') }}"><i class="fas fa-calendar-alt"></i>Calendar</a></li>
             <li><a href="{{ url('/profile') }}"><i class="fas fa-user"></i>Profile</a></li>
             <li><a href="{{ url('/settings') }}"><i class="fas fa-cog"></i>Settings</a></li>
+            <li><a href="{{ url('/aboutUs') }}"><i class="fas fa-user-tie"></i> About Us</a></li>
+
         </ul>
     </div>
 

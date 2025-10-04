@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        integrity="sha512-p...==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -20,8 +20,7 @@
         <div class="priority-section">
             <div class="priority-content">
                 <h2 class="priority-title">Start Your Productivity Journey</h2>
-                <p class="priority-tip">By registering today, you're taking the first step toward mastering your time.
-                </p>
+                <p class="priority-tip">By registering today, you're taking the first step toward mastering your time.</p>
                 <p class="priority-quote">"Time isn't the main thing. It's the only thing."</p>
                 <p class="priority-author">- Miles Davis</p>
             </div>
@@ -30,7 +29,7 @@
         <!-- Register Section -->
         <div class="register-section">
             <div class="register-header">
-                <div class="logo-form mb-10" >
+                <div class="logo-form mb-10">
                     <div class="logo-icon">TM</div>
                     <div class="logo-text">TIME<span>MASTERY</span></div>
                 </div>
@@ -94,12 +93,12 @@
                 </div>
             </form>
 
-            <<div class="login-section-auth mt-4">
-    <p class="login-text">Already have an account?</p>
-    <button type="button" class="btn-auth btn-secondary-auth"
-        onclick="window.location.href='{{ route('login') }}'">LOGIN</button>
-</div>
-
+            <!-- Login Redirect -->
+            <div class="login-section-auth mt-4">
+                <p class="login-text">Already have an account?</p>
+                <button type="button" class="btn-auth btn-secondary-auth"
+                    onclick="window.location.href='{{ route('login') }}'">LOGIN</button>
+            </div>
         </div>
     </div>
 

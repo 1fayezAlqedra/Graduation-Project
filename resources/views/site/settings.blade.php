@@ -4,6 +4,8 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('siteasset/css/settings.css') }}">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endsection
 
 @section('content')
@@ -61,12 +63,24 @@
             @csrf
             @method('PUT')
 
+            <!-- Toggle reminders -->
             <div class="form-group">
                 <label>Reminders</label>
                 <label class="switch">
                     <input type="checkbox" name="reminders" {{ $user->reminders ? 'checked' : '' }}>
                     <span class="slider"></span>
                 </label>
+            </div>
+
+            <!-- Default reminder time -->
+            <div class="form-group">
+                <label>Default Reminder Time</label>
+                <select name="default_remind_before">
+                    <option value="5" {{ $user->default_remind_before == 5 ? 'selected' : '' }}>5 minutes before</option>
+                    <option value="10" {{ $user->default_remind_before == 10 ? 'selected' : '' }}>10 minutes before</option>
+                    <option value="30" {{ $user->default_remind_before == 30 ? 'selected' : '' }}>30 minutes before</option>
+                    <option value="60" {{ $user->default_remind_before == 60 ? 'selected' : '' }}>1 hour before</option>
+                </select>
             </div>
 
             <button type="submit" class="btn btn-primary">Save Preferences</button>
@@ -76,14 +90,37 @@
     <!-- Account Management -->
     <div class="section">
         <h2>Account Management</h2>
-        <form method="POST" action="{{ route('settings.destroy', auth()->id()) }}">
+        <form id="deleteForm" method="POST" action="{{ route('settings.destroy', auth()->id()) }}">
             @csrf
             @method('DELETE')
             <button type="button" class="btn btn-secondary" onclick="alert('Download feature not implemented yet')">Download My Data</button>
-            <button type="submit" class="btn btn-danger" onclick="return confirm('⚠️ Are you sure you want to delete your account? This action cannot be undone.')">Delete Account</button>
+            <button type="button" class="btn btn-danger" id="deleteBtn">Delete Account</button>
         </form>
     </div>
 
 </div>
 
+@endsection
+
+@section('scripts')
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('deleteBtn').addEventListener('click', function (e) {
+            Swal.fire({
+                title: '⚠️ Are you sure?',
+                text: "Deleting your account is permanent and cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#3498db',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteForm').submit();
+                }
+            });
+        });
+    </script>
 @endsection

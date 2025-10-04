@@ -17,7 +17,7 @@
 
 <div class="day-section" style="max-width:900px;margin:0 auto;">
 
-    <!-- زر إضافة مهمة -->
+    <!-- Add Task button -->
     <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
         <a href="{{ route('tasks.create') }}" class="btn-add-task">+ Add Task</a>
     </div>
@@ -34,11 +34,14 @@
         @foreach ($todayTasks as $task)
             <div class="task-card @if($task->completed) completed @endif">
                 <div class="task-info">
-                    <div class="task-name">
+                    <div class="task-name" style="color: black">
                         {{ $task->title }}
-                        @if ($task->priority == 'High') <span class="priority priority-high">High</span>
-                        @elseif($task->priority == 'Medium') <span class="priority priority-medium">Medium</span>
-                        @elseif($task->priority == 'Low') <span class="priority priority-low">Low</span>
+                        @if ($task->priority == 'High')
+                            <span class="priority priority-high">High</span>
+                        @elseif($task->priority == 'Medium')
+                            <span class="priority priority-medium">Medium</span>
+                        @elseif($task->priority == 'Low')
+                            <span class="priority priority-low">Low</span>
                         @endif
                     </div>
                     <div class="task-time">{{ $task->start_time->format('h:i A') }} - {{ $task->end_time->format('h:i A') }}</div>
@@ -73,6 +76,7 @@
 </div>
 @endsection
 
+
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -86,4 +90,44 @@
     });
 </script>
 @endif
+
+<script>
+    // 🔔 Alarm sound
+    const alarmSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+
+    // Show reminder popup
+    function showReminder(reminder) {
+        alarmSound.play();
+
+        Swal.fire({
+            title: '⏰ Reminder Alert',
+            text: reminder.task ? reminder.task.title : 'You have a reminder!',
+            icon: 'info',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            // Mark as read after user sees it
+            fetch(`/reminders/${reminder.id}/read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            });
+        });
+    }
+
+    // Fetch reminders every 10 seconds
+    setInterval(() => {
+        fetch('/reminders/upcoming')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.reminders.length > 0) {
+                    data.reminders.forEach(reminder => {
+                        showReminder(reminder);
+                    });
+                }
+            })
+            .catch(err => console.error(err));
+    }, 10000);
+</script>
 @endsection

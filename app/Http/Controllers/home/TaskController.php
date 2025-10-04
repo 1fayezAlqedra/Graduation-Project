@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Home;
 
 use App\Models\Task;
+use App\Models\Reminder;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -10,168 +11,162 @@ use Carbon\Carbon;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
+    // عرض كل المهام للمستخدم الحالي
+    public function index()
     {
-        $user = auth()->user();
+        $tasks = Task::where('user_id', auth()->id())
+            ->orderBy('start_time', 'asc')
+            ->get();
 
-        // فلترة من الريكوست
-        $monthFilter = $request->input('month', Carbon::now()->month); // 1-12
-        $weekFilter = $request->input('week_in_month', null); // رقم الأسبوع
-        $sortFilter = $request->input('sort', ''); // 'priority' أو 'nearest'
-
-        // اجلب كل مهام المستخدم
-        $tasks = Task::where('user_id', $user->id);
-
-        // حساب بداية ونهاية الشهر
-        $year = Carbon::now()->year;
-        $startOfMonth = Carbon::create($year, $monthFilter, 1)->startOfMonth();
-        $endOfMonth = Carbon::create($year, $monthFilter, 1)->endOfMonth();
-
-        // حساب أسابيع الشهر لتظهر تواريخ البداية والنهاية
-        $weeks = [];
-        $current = $startOfMonth->copy();
-        $weekNumber = 1;
-
-        while ($current->lte($endOfMonth)) {
-            $weekStart = $current->copy();
-            $weekEnd = $current->copy()->addDays(6);
-            if ($weekEnd->gt($endOfMonth)) {
-                $weekEnd = $endOfMonth->copy();
-            }
-
-            $weeks[$weekNumber] = $weekStart->format('d/m') . ' - ' . $weekEnd->format('d/m');
-
-            $current->addDays(7);
-            $weekNumber++;
-        }
-
-        // فلترة المهام حسب الشهر
-        $tasks = $tasks->whereBetween('start_time', [$startOfMonth, $endOfMonth]);
-
-        // فلترة حسب الأسبوع إذا محدد
-        if ($weekFilter && isset($weeks[$weekFilter])) {
-            $range = explode(' - ', $weeks[$weekFilter]);
-            $start = Carbon::createFromFormat('d/m', $range[0])->year($year);
-            $end = Carbon::createFromFormat('d/m', $range[1])->year($year)->endOfDay();
-            $tasks = $tasks->whereBetween('start_time', [$start, $end]);
-        }
-
-        // ترتيب حسب الفلتر
-        if ($sortFilter === 'priority') {
-            $tasks = $tasks->orderByRaw("FIELD(priority, 'High','Medium','Low')");
-        } elseif ($sortFilter === 'nearest') {
-            $tasks = $tasks->orderBy('start_time', 'asc');
-        }
-
-        $tasks = $tasks->get();
-
-        return view('site.tasks', compact('tasks', 'weeks', 'monthFilter', 'weekFilter', 'sortFilter'));
+        return view('site.tasks', compact('tasks'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // عرض نموذج إضافة مهمة جديدة
     public function create()
     {
         return view('site.add-task');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
+// Store A new Task
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'priority' => 'required|in:Low,Medium,High',
-            'start_time' => 'required|date|after:now',
-            'end_time' => 'required|date|after:start_time',
+            'start_time' => 'required|date_format:Y-m-d H:i|after_or_equal:now',
+            'end_time' => 'required|date_format:Y-m-d H:i|after:start_time',
         ]);
 
-        $validated['user_id'] = auth()->id();
-        $validated['completed'] = false;
+        $start = Carbon::createFromFormat('Y-m-d H:i', $validated['start_time']);
+        $end = Carbon::createFromFormat('Y-m-d H:i', $validated['end_time']);
 
-        $conflict = Task::where('user_id', auth()->id())
-            ->where(function ($query) use ($validated) {
-                $query->whereBetween('start_time', [$validated['start_time'], $validated['end_time']])
-                    ->orWhereBetween('end_time', [$validated['start_time'], $validated['end_time']])
-                    ->orWhere(function ($q) use ($validated) {
-                        $q->where('start_time', '<=', $validated['start_time'])
-                            ->where('end_time', '>=', $validated['end_time']);
+        // Check for task overlap
+        $overlap = Task::where('user_id', auth()->id())
+            ->where(function ($q) use ($start, $end) {
+                $q->whereBetween('start_time', [$start, $end])
+                    ->orWhereBetween('end_time', [$start, $end])
+                    ->orWhere(function ($q2) use ($start, $end) {
+                        $q2->where('start_time', '<=', $start)
+                            ->where('end_time', '>=', $end);
                     });
-            })
-            ->exists();
+            })->exists();
 
-        if ($conflict) {
-            return back()->withErrors(['start_time' => 'This time conflicts with another task.'])->withInput();
+        if ($overlap) {
+            return back()->withErrors(['start_time' => 'This task overlaps with another task'])->withInput();
         }
 
-        Task::create($validated);
+        // create Task
+        $task = Task::create([
+            'user_id' => auth()->id(),
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'priority' => $validated['priority'],
+            'start_time' => $start,
+            'end_time' => $end,
+            'completed' => false,
+        ]);
 
-        return redirect()->route('tasks.index')->with('success', 'The task has been added successfully.');
+        // Create a reminder (10 minutes before the task or as set by the user)
+        $reminderMinutes = auth()->user()->reminder_before_minutes ?? 10;
+        Reminder::create([
+            'task_id' => $task->id,
+            'user_id' => auth()->id(),
+            'remind_at' => $start->copy()->subMinutes($reminderMinutes),
+            'notified' => false,
+        ]);
+
+        return redirect()->route('tasks.index')
+            ->with('success', 'Task added successfully with reminder.');
     }
 
+    // عرض نموذج تعديل المهمة
     public function edit($id)
     {
-        $task = Task::findOrFail($id);
+        $task = Task::where('user_id', auth()->id())->findOrFail($id);
         return view('site.edit-task', compact('task'));
     }
 
+    // تحديث المهمة
     public function update(Request $request, $id)
     {
-        $task = Task::findOrFail($id);
+        $task = Task::where('user_id', auth()->id())->findOrFail($id);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'priority' => 'required|in:Low,Medium,High',
-            'start_time' => 'required|date|after:now',
-            'end_time' => 'required|date|after:start_time',
+            'start_time' => 'required|date_format:Y-m-d H:i|after_or_equal:now',
+            'end_time' => 'required|date_format:Y-m-d H:i|after:start_time',
         ]);
 
-        $conflict = Task::where('user_id', auth()->id())
-            ->where('id', '!=', $task->id)
-            ->where(function ($query) use ($validated) {
-                $query->whereBetween('start_time', [$validated['start_time'], $validated['end_time']])
-                    ->orWhereBetween('end_time', [$validated['start_time'], $validated['end_time']])
-                    ->orWhere(function ($q) use ($validated) {
-                        $q->where('start_time', '<=', $validated['start_time'])
-                            ->where('end_time', '>=', $validated['end_time']);
-                    });
-            })
-            ->exists();
+        $start = Carbon::createFromFormat('Y-m-d H:i', $validated['start_time']);
+        $end = Carbon::createFromFormat('Y-m-d H:i', $validated['end_time']);
 
-        if ($conflict) {
-            return back()->withErrors(['start_time' => 'This time conflicts with another task.'])->withInput();
+        // التحقق من تداخل المهام مع استثناء المهمة الحالية
+        $overlap = Task::where('user_id', auth()->id())
+            ->where('id', '!=', $task->id)
+            ->where(function ($q) use ($start, $end) {
+                $q->whereBetween('start_time', [$start, $end])
+                    ->orWhereBetween('end_time', [$start, $end])
+                    ->orWhere(function ($q2) use ($start, $end) {
+                        $q2->where('start_time', '<=', $start)
+                            ->where('end_time', '>=', $end);
+                    });
+            })->exists();
+
+        if ($overlap) {
+            return back()->withErrors(['start_time' => 'This task overlaps with another task'])->withInput();
         }
 
-        $task->update($validated);
+        // تحديث المهمة
+        $task->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'priority' => $validated['priority'],
+            'start_time' => $start,
+            'end_time' => $end,
+        ]);
 
-        return redirect()->route('tasks.index')->with('success', 'The task has been modified successfully.');
+        // تحديث التذكير
+        $reminderMinutes = auth()->user()->reminder_before_minutes ?? 10;
+        $reminder = Reminder::firstOrCreate(
+            ['task_id' => $task->id],
+            [
+                'user_id' => auth()->id(),
+                'remind_at' => $start->copy()->subMinutes($reminderMinutes),
+                'notified' => false,
+            ]
+        );
+
+        $reminder->update([
+            'remind_at' => $start->copy()->subMinutes($reminderMinutes),
+            'notified' => false,
+        ]);
+
+        return redirect()->route('tasks.index')
+            ->with('success', 'Task updated successfully with reminder.');
     }
 
+    // حذف مهمة
     public function destroy($id)
     {
-        $task = Task::findOrFail($id);
-        if ($task->user_id != auth()->id()) {
-            abort(403);
-        }
+        $task = Task::where('user_id', auth()->id())->findOrFail($id);
+        Reminder::where('task_id', $task->id)->delete();
         $task->delete();
-        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+
+        return redirect()->route('tasks.index')
+            ->with('success', 'Task deleted successfully.');
     }
 
+    // تعليم المهمة كمكتملة
     public function complete($id)
     {
-        $task = Task::findOrFail($id);
-        if ($task->user_id != auth()->id()) {
-            abort(403);
-        }
-        $task->completed = true;
-        $task->save();
-        return redirect()->back()->with('success', 'Task marked as completed!');
+        $task = Task::where('user_id', auth()->id())->findOrFail($id);
+        $task->update(['completed' => true]);
+        Reminder::where('task_id', $task->id)->delete();
+
+        return redirect()->back()->with('success', 'Task marked as completed and reminder removed.');
     }
 }

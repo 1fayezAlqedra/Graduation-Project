@@ -1,10 +1,8 @@
 <?php
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Task extends Model
 {
@@ -18,9 +16,26 @@ class Task extends Model
         'start_time',
         'end_time',
         'completed',
-    ];
+    ] ; 
 
-    protected $casts = [
+
+
+    // Relation With User
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
+
+
+
+
+
+
+
+
+  protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
         'completed' => 'boolean',
@@ -30,14 +45,7 @@ class Task extends Model
         'priority' => 'medium',
         'completed' => false,
     ];
-
-    // ✅ العلاقة مع المستخدم
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    // ✅ سكوبات جاهزة
+    // السكوبات
     public function scopeCompleted($query)
     {
         return $query->where('completed', true);

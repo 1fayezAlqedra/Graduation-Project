@@ -27,7 +27,8 @@ class AuthenticatedSessionController extends Controller
     $request->authenticate();
     $request->session()->regenerate();
 
-    // هنا نفحص الدور
+    //check the role
+
     if (auth()->user()->role === 'admin') {
         return redirect()->route('admin.index');
     }

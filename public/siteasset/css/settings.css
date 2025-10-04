@@ -1,8 +1,11 @@
+/* Base */
 body {
     background: #0b1e39; /* كحلي غامق */
     font-family: "Segoe UI", Tahoma, sans-serif;
     color: #333;
 }
+
+/* Container */
 .settings-container {
     max-width: 950px;
     margin: 40px auto;
@@ -11,57 +14,17 @@ body {
     border-radius: 20px;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
 }
-/* ملف settings.css */
 
-/* الأزرار الأساسية (Primary Button) */
-.btn-primary {
-    background-color: #1e40af; /* كحلي */
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-primary:hover {
-    background-color: #1b3b92; /* كحلي غامق عند الهوفر */
-}
-
-/* زر الحذف (Danger Button) */
-.btn-danger {
-    background-color: #dc2626; /* أحمر */
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-danger:hover {
-    background-color: #991b1b; /* أحمر داكن عند الهوفر */
-}
-
-/* زر ثانوي (اختياري) */
-.btn-secondary {
-    background-color: #6b7280; /* رمادي متوسط */
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-secondary:hover {
-    background-color: #4b5563; /* رمادي غامق */
-}
-
+/* Headings */
 h2 {
     font-size: 22px;
     margin-bottom: 15px;
     color: #0056b3;
-    border-left: 5px solid #007bff;
+    border-left: 5px solid #3498db;
     padding-left: 10px;
 }
+
+/* Form */
 .form-group {
     margin-bottom: 18px;
 }
@@ -73,41 +36,126 @@ label {
 input,
 select {
     width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
     transition: all 0.3s ease;
+    font-size: 15px;
 }
 input:focus,
 select:focus {
-    border-color: #007bff;
+    border-color: #3498db;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
 }
+
+/* Buttons - General */
 .btn {
     padding: 10px 20px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
     font-weight: 600;
+    transition: all 0.3s ease;
 }
+
+/* Primary */
 .btn-primary {
-    background: #007bff;
+    background: #3498db;
     color: white;
 }
+.btn-primary:hover {
+    background: #217dbb;
+    box-shadow: 0 0 12px rgba(52,152,219,0.6);
+}
+
+/* Secondary */
 .btn-secondary {
-    background: #6c757d;
+    background: #3498db;
     color: white;
 }
+.btn-secondary:hover {
+    background: #217dbb;
+    box-shadow: 0 0 12px rgba(52,152,219,0.6);
+}
+
+/* Danger */
 .btn-danger {
-    background: #dc3545;
-    color: white;
+    background: #e74c3c;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
 }
+.btn-danger:hover {
+    background: #b71c1c; /* أحمر غامق */
+    animation: pulse-shake 0.6s ease;
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.8); /* glow أحمر */
+}
+
+/* Pulse + Shake animation */
+@keyframes pulse-shake {
+    0% { transform: scale(1) translateX(0); }
+    20% { transform: scale(1.05) translateX(-2px); }
+    40% { transform: scale(1.1) translateX(2px); }
+    60% { transform: scale(1.05) translateX(-2px); }
+    80% { transform: scale(1.08) translateX(2px); }
+    100% { transform: scale(1) translateX(0); }
+}
+
+/* Dropdown (fancy select) */
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+.select-wrapper select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+    color: #333;
+    font-weight: 600;
+    font-size: 15px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.select-wrapper select:hover {
+    background: linear-gradient(145deg, #f1f3f5, #dee2e6);
+    border-color: #999;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+.select-wrapper select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 8px rgba(52,152,219,0.4);
+}
+
+/* Custom dropdown arrow */
+.select-wrapper::after {
+    content: "▼";
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #666;
+    font-size: 14px;
+}
+.select-wrapper:hover::after {
+    color: #3498db;
+}
+
+/* Sections */
 .section {
     margin-bottom: 45px;
     padding-bottom: 25px;
     border-bottom: 1px dashed #ddd;
 }
+
+/* Switch toggle */
 .switch {
     position: relative;
     display: inline-block;
@@ -142,7 +190,7 @@ select:focus {
     border-radius: 50%;
 }
 input:checked + .slider {
-    background-color: #007bff;
+    background-color: #3498db;
 }
 input:checked + .slider:before {
     transform: translateX(24px);
